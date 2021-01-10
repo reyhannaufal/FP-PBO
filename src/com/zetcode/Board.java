@@ -14,26 +14,22 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
     /*
-     * TODO: 1. Bikin menu -> dalam menu ada start, optional(highscrore), exit 2.
-     * Bikin ghost beda-beda warnanya 3. Buah super
+     * TODO: 1. Bikin menu -> Masih bug di helpScreen
+     *       2. Refactor Code yang implementasi oop
+     *       3. Bikin ghost yang beda-beda [Variasi] [Selesai]
+     *       4. Bikin map berbeda setiap level increment [Variasi] [Selesai]
+     *
      */
 
     /**
@@ -46,7 +42,7 @@ public class Board extends JPanel implements ActionListener {
     private Image ii;
 
     // Mengubah titk-titik menjadi hijau
-    private final Color dotColor = new Color(100, 100, 100);
+    private final Color dotColor = new Color(255, 255, 255);
     private Color mazeColor;
 
     private boolean inGame = false;
@@ -56,9 +52,7 @@ public class Board extends JPanel implements ActionListener {
     private final int N_BLOCKS = 15;
     private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final int PAC_ANIM_DELAY = 2;
-    private final int PACMAN_ANIM_COUNT = 4;
     private final int MAX_GHOSTS = 12;
-    private final int PACMAN_SPEED = 6;
 
     private int pacAnimCount = PAC_ANIM_DELAY; // bisa diganti jadi 2
     private int pacAnimDir = 1;
@@ -75,8 +69,7 @@ public class Board extends JPanel implements ActionListener {
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
 
-    private final int validSpeeds[] = { 1, 2, 3, 4, 6, 8 };
-    private final int maxSpeed = 6;
+    private final int[] validSpeeds = { 1, 2, 3, 4, 6, 8 };
 
     private int currentSpeed = 3;
     private short[] screenData;
@@ -129,6 +122,7 @@ public class Board extends JPanel implements ActionListener {
             pacAnimCount = PAC_ANIM_DELAY;
             pacmanAnimPos = pacmanAnimPos + pacAnimDir;
 
+            int PACMAN_ANIM_COUNT = 4;
             if (pacmanAnimPos == (PACMAN_ANIM_COUNT - 1) || pacmanAnimPos == 0) {
                 pacAnimDir = -pacAnimDir;
             }
@@ -140,11 +134,10 @@ public class Board extends JPanel implements ActionListener {
             death();
         } else {
             movePacman();
+//            new Pacman();
             drawPacman(g2d);
             moveGhosts(g2d);
-            // Ghost gh;
-            // gh = new Ghost(g2d);
-            // gh.moveGhosts(g2d);
+//            new Ghost(g2d);
 
             checkMaze();
         }
@@ -267,6 +260,7 @@ public class Board extends JPanel implements ActionListener {
                 N_GHOSTS++;
             }
 
+            int maxSpeed = 6;
             if (currentSpeed < maxSpeed) {
                 currentSpeed++;
             }
@@ -297,7 +291,7 @@ public class Board extends JPanel implements ActionListener {
 
         for (i = 0; i < N_GHOSTS; i++) {
             if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
-                pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (int) (ghost_y[i] / BLOCK_SIZE);
+                pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (ghost_y[i] / BLOCK_SIZE);
 
                 count = 0;
 
@@ -399,7 +393,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0) {
-            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (int) (pacman_y / BLOCK_SIZE);
+            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (pacman_y / BLOCK_SIZE);
             ch = screenData[pos];
 
             if ((ch & 16) != 0) {
@@ -427,6 +421,7 @@ public class Board extends JPanel implements ActionListener {
                 pacmand_y = 0;
             }
         }
+        int PACMAN_SPEED = 6;
         pacman_x = pacman_x + PACMAN_SPEED * pacmand_x;
         pacman_y = pacman_y + PACMAN_SPEED * pacmand_y;
     }
@@ -447,72 +442,40 @@ public class Board extends JPanel implements ActionListener {
     private void drawPacmanUp(Graphics2D g2d) {
 
         switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(Assets.pacman2up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(Assets.pacman3up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(Assets.pacman4up, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
-                break;
+            case 1 -> g2d.drawImage(Assets.pacman2up, pacman_x + 1, pacman_y + 1, this);
+            case 2 -> g2d.drawImage(Assets.pacman3up, pacman_x + 1, pacman_y + 1, this);
+            case 3 -> g2d.drawImage(Assets.pacman4up, pacman_x + 1, pacman_y + 1, this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
         }
     }
 
     private void drawPacmanDown(Graphics2D g2d) {
 
         switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(Assets.pacman2down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(Assets.pacman3down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(Assets.pacman4down, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
-                break;
+            case 1 -> g2d.drawImage(Assets.pacman2down, pacman_x + 1, pacman_y + 1, this);
+            case 2 -> g2d.drawImage(Assets.pacman3down, pacman_x + 1, pacman_y + 1, this);
+            case 3 -> g2d.drawImage(Assets.pacman4down, pacman_x + 1, pacman_y + 1, this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
         }
     }
 
     private void drawPacnanLeft(Graphics2D g2d) {
 
         switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(Assets.pacman2left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(Assets.pacman3left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(Assets.pacman4left, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
-                break;
+            case 1 -> g2d.drawImage(Assets.pacman2left, pacman_x + 1, pacman_y + 1, this);
+            case 2 -> g2d.drawImage(Assets.pacman3left, pacman_x + 1, pacman_y + 1, this);
+            case 3 -> g2d.drawImage(Assets.pacman4left, pacman_x + 1, pacman_y + 1, this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
         }
     }
 
     private void drawPacmanRight(Graphics2D g2d) {
 
         switch (pacmanAnimPos) {
-            case 1:
-                g2d.drawImage(Assets.pacman2right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 2:
-                g2d.drawImage(Assets.pacman3right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            case 3:
-                g2d.drawImage(Assets.pacman4right, pacman_x + 1, pacman_y + 1, this);
-                break;
-            default:
-                g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
-                break;
+            case 1 -> g2d.drawImage(Assets.pacman2right, pacman_x + 1, pacman_y + 1, this);
+            case 2 -> g2d.drawImage(Assets.pacman3right, pacman_x + 1, pacman_y + 1, this);
+            case 3 -> g2d.drawImage(Assets.pacman4right, pacman_x + 1, pacman_y + 1, this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, this);
         }
     }
 

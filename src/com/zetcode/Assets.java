@@ -27,6 +27,7 @@ public class Assets {
         pacman3right = new ImageIcon("src/resources/images/right2.png").getImage();
         pacman4right = new ImageIcon("src/resources/images/right3.png").getImage();
 
+
     }
     
 }

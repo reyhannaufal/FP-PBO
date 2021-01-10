@@ -13,14 +13,22 @@ public class Ghost {
 	private final int N_BLOCKS = 15;
 	private boolean dying = false;
 	private boolean inGame = false;
-	
+    private final int MAX_GHOSTS = 12;
+
 	private int[] dx, dy;
 	private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
 	private int pacman_x, pacman_y;
 	
 	public Ghost(Graphics2D g2d) {
+        screenData = new short[N_BLOCKS * N_BLOCKS];
+        ghost_x = new int[MAX_GHOSTS];
+        ghost_x = new int[MAX_GHOSTS];
+        ghost_dx = new int[MAX_GHOSTS];
+        ghost_y = new int[MAX_GHOSTS];
+        ghost_dy = new int[MAX_GHOSTS];
+        ghostSpeed = new int[MAX_GHOSTS];
 		this.g2d = g2d;
-//		moveGhosts(g2d);
+		moveGhosts(g2d);
 	}
 	
 	protected void moveGhosts(Graphics2D g2d) {
