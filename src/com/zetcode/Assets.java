@@ -12,7 +12,7 @@ public class Assets {
  
     	ghostorange = new ImageIcon("src/resources/images/ghostorange.png").getImage();
         ghostblue = new ImageIcon("src/resources/images/ghostinky.png").getImage();
-        ghostpink = new ImageIcon("src/resources/images/ghospink.png").getImage();
+        ghostpink = new ImageIcon("src/resources/images/ghostpink.png").getImage();
         pacman1 = new ImageIcon("src/resources/images/pacman.png").getImage();
         pacman2up = new ImageIcon("src/resources/images/up1.png").getImage();
         pacman3up = new ImageIcon("src/resources/images/up2.png").getImage();
@@ -26,8 +26,8 @@ public class Assets {
         pacman2right = new ImageIcon("src/resources/images/right1.png").getImage();
         pacman3right = new ImageIcon("src/resources/images/right2.png").getImage();
         pacman4right = new ImageIcon("src/resources/images/right3.png").getImage();
-
-
+        
     }
-    
+
+
 }

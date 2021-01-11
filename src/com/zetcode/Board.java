@@ -62,6 +62,7 @@ public class Board extends JPanel implements ActionListener {
     private int[] dx, dy;
     private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private int counterLevel;
+    private int showHelp;
 
     /*
      * Bisa jadi class sendiri ini controller Terus fungsi-fungsi yang ada mengikuti
@@ -277,7 +278,7 @@ public class Board extends JPanel implements ActionListener {
         if (pacsLeft == 0) {
             inGame = false;
             counterLevel = 0;
-
+            score = 0;
         }
 
         continueLevel();
@@ -599,17 +600,22 @@ public class Board extends JPanel implements ActionListener {
         } else {
             showIntroScreen(g2d);
         }
+        
+        if(showHelp == 1) {
+        	showHelpScreen(g2d);
+        	g2d.dispose();
+        }
+        
 
         g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
-        g2d.dispose();
     }
 
     class TAdapter extends KeyAdapter {
 
         @Override
         public void keyPressed(KeyEvent e) {
-
+        	
             int key = e.getKeyCode();
 
             if (inGame) {
@@ -633,12 +639,17 @@ public class Board extends JPanel implements ActionListener {
                         timer.stop();
                     } else {
                         timer.start();
-                    }
+                    }              
                 }
             } else {
                 if (key == 's' || key == 'S') {
                     inGame = true;
                     initGame();
+                }
+                
+                if (key == 'h' || key == 'H') {
+                	showHelp = 1;
+//                	key = ;
                 }
             }
         }
