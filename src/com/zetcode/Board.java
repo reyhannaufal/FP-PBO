@@ -22,7 +22,19 @@ import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Board extends JPanel implements ActionListener, Constants {
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+public class Board extends JPanel implements ActionListener, Constants, LineListener{
 
     /*
      * TODO: 1. Bikin menu -> Masih bug di helpScreen
@@ -47,7 +59,14 @@ public class Board extends JPanel implements ActionListener, Constants {
 
     private boolean inGame = false;
     private boolean dying = false;
-    private int pacAnimCount = PAC_ANIM_DELAY;
+
+    private final int BLOCK_SIZE = 24;
+    private final int N_BLOCKS = 15;
+    private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
+    private final int PAC_ANIM_DELAY = 2;
+    private final int MAX_GHOSTS = 12;
+
+    private int pacAnimCount = PAC_ANIM_DELAY; // bisa diganti jadi 2
     private int pacAnimDir = 1;
     private int pacmanAnimPos = 0;
     private int N_GHOSTS = 6;
@@ -56,7 +75,6 @@ public class Board extends JPanel implements ActionListener, Constants {
     private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private int counterLevel;
     private int showHelp;
-    private int escape = 0;
 
     /*
      * Bisa jadi class sendiri ini controller Terus fungsi-fungsi yang ada mengikuti
@@ -64,14 +82,21 @@ public class Board extends JPanel implements ActionListener, Constants {
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
 
-
+    private final int[] validSpeeds = { 1, 2, 3, 4, 6, 8 };
 
     private int currentSpeed = 3;
     private short[] screenData;
     private Timer timer;
+    
+    boolean playCompleted;
+    String audioFilePath = "./src/resources/audio/beginning.wav";
 
     public Board() {
-        Assets.init();
+        try {
+    	Assets.init();
+        } catch (Exception e) {
+        	System.err.println(e);
+        }
         initVariables();
         initBoard();
     }
@@ -132,6 +157,7 @@ public class Board extends JPanel implements ActionListener, Constants {
 //            new Pacman();
             drawPacman(g2d);
             moveGhosts(g2d);
+//            new Ghost(g2d);
 
             checkMaze();
         }
@@ -143,29 +169,75 @@ public class Board extends JPanel implements ActionListener, Constants {
         g.setColor(Color.white);
         g.drawRect(50, SCREEN_SIZE / 2 - 50, SCREEN_SIZE - 100, 90);
 
-        String d = "Tekan s untuk bermain";
-        String f = "Tekan h untuk bantuan";
-
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = this.getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
-
-        g.drawString(d, (SCREEN_SIZE - metr.stringWidth(d)) / 2, SCREEN_SIZE / 2 - metr.getHeight() / 2);
-        g.drawString(f, (SCREEN_SIZE - metr.stringWidth(f)) / 2, SCREEN_SIZE / 2 + metr.getHeight() / 2);
-
+        
+        StringBuilder str = new StringBuilder();
+        str.append("Tekan s untuk bermain");
+        
+        g.drawString(str.toString(), (SCREEN_SIZE - metr.stringWidth(str.toString())) / 2, SCREEN_SIZE / 2 - metr.getHeight() / 2);
+        
+        str.delete(0, str.length());
+        
+        str.append("Tekan h untuk bantuan");
+        g.drawString(str.toString(), (SCREEN_SIZE - metr.stringWidth(str.toString())) / 2, SCREEN_SIZE / 2 + metr.getHeight() / 2);
+        
+        str.delete(0, str.length());
+        
+        File audioFile = new File(audioFilePath);
+        
+        
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+ 
+            AudioFormat format = audioStream.getFormat();
+ 
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+ 
+            Clip audioClip = (Clip) AudioSystem.getLine(info);
+ 
+            audioClip.addLineListener(this);
+ 
+            audioClip.open(audioStream);
+             
+            audioClip.start();
+            
+            while (!playCompleted) {
+                // wait for the playback completes
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            
+            audioClip.close();
+             
+        } catch (UnsupportedAudioFileException ex) {
+            System.out.println("The specified audio file is not supported.");
+            ex.printStackTrace();
+        } catch (LineUnavailableException ex) {
+            System.out.println("Audio line for playing back is unavailable.");
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println("Error playing the audio file.");
+            ex.printStackTrace();
+        }
+         
     }
 
-    private void showHelpScreen(Graphics g) {
-        g.setColor(new Color(0, 32, 48));
+    public void showHelpScreen(Graphics g) {
+    	g.setColor(new Color(0, 32, 48));
         g.fillRect(10, 10, SCREEN_SIZE - 15, SCREEN_SIZE - 15);
         g.setColor(Color.white);
         g.drawRect(10, 10, SCREEN_SIZE - 15, SCREEN_SIZE - 15);
 
         int bx = 25, by = 60;
 
-        String a = "Bantuan";
+        String a = "Help";
 
         Font big = new Font("Helvetica", Font.BOLD, 18);
         Font medium = new Font("Helvetica", Font.BOLD, 14);
@@ -229,7 +301,7 @@ public class Board extends JPanel implements ActionListener, Constants {
         g.drawString(s, SCREEN_SIZE / 2 + 86, SCREEN_SIZE + 16);
 
         for (i = 0; i < pacsLeft; i++) {
-            g.drawImage(Assets.pacman3left, i * 28 + 8, SCREEN_SIZE + 1, this);
+        	g.drawImage(Assets.pacman3left, i * 28 + 8, SCREEN_SIZE + 1, this);
         }
     }
 
@@ -281,11 +353,59 @@ public class Board extends JPanel implements ActionListener, Constants {
 
         short i;
         int pos;
+        int count;
+
         for (i = 0; i < N_GHOSTS; i++) {
             if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
                 pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (ghost_y[i] / BLOCK_SIZE);
 
-                Ghost.ghostBrain(i, pos, screenData, ghost_dx, dx, dy, ghost_dy);
+                count = 0;
+
+                if ((screenData[pos] & 1) == 0 && ghost_dx[i] != 1) {
+                    dx[count] = -1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 2) == 0 && ghost_dy[i] != 1) {
+                    dx[count] = 0;
+                    dy[count] = -1;
+                    count++;
+                }
+
+                if ((screenData[pos] & 4) == 0 && ghost_dx[i] != -1) {
+                    dx[count] = 1;
+                    dy[count] = 0;
+                    count++;
+                }
+
+                if ((screenData[pos] & 8) == 0 && ghost_dy[i] != -1) {
+                    dx[count] = 0;
+                    dy[count] = 1;
+                    count++;
+                }
+
+                if (count == 0) {
+
+                    if ((screenData[pos] & 15) == 15) {
+                        ghost_dx[i] = 0;
+                        ghost_dy[i] = 0;
+                    } else {
+                        ghost_dx[i] = -ghost_dx[i];
+                        ghost_dy[i] = -ghost_dy[i];
+                    }
+
+                } else {
+
+                    count = (int) (Math.random() * count);
+
+                    if (count > 3) {
+                        count = 3;
+                    }
+
+                    ghost_dx[i] = dx[count];
+                    ghost_dy[i] = dy[count];
+                }
 
             }
 
@@ -529,8 +649,7 @@ public class Board extends JPanel implements ActionListener, Constants {
         doDrawing(g);
     }
 
-    private void doDrawing(Graphics g)  {
-
+    private void doDrawing(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -546,19 +665,15 @@ public class Board extends JPanel implements ActionListener, Constants {
         } else {
             showIntroScreen(g2d);
         }
-
+        
         if(showHelp == 1) {
         	showHelpScreen(g2d);
-            if(escape == 1){
-                g2d.dispose();
-                showIntroScreen(g2d);
-            }
         }
+        
+        g2d.dispose();
         g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
     }
-
-
 
     class TAdapter extends KeyAdapter {
 
@@ -599,8 +714,9 @@ public class Board extends JPanel implements ActionListener, Constants {
                 if (key == 'h' || key == 'H') {
                 	showHelp = 1;
                 }
-                if(key == KeyEvent.VK_ESCAPE || key == 'E' || key == 'e'){
-                    escape = 1;
+                
+                if (key == 'e' || key == 'E') {
+                	showHelp = 0;
                 }
             }
         }
@@ -623,4 +739,13 @@ public class Board extends JPanel implements ActionListener, Constants {
 
         repaint();
     }
+
+	@Override
+	public void update(LineEvent event) {
+		LineEvent.Type type = event.getType();
+        
+		if (type == LineEvent.Type.STOP) {
+            playCompleted = true;
+		}
+	}
 }

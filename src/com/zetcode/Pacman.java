@@ -1,5 +1,7 @@
 package com.zetcode;
 
+import java.awt.Graphics2D;
+
 public class Pacman {
     /*TODO: 11/01/2021
       1. Pada play game fungsi pacman yang ditulis
@@ -16,12 +18,9 @@ public class Pacman {
     private final int BLOCK_SIZE = 24;
 
     public Pacman() {
-        screenData = new short[N_BLOCKS * N_BLOCKS];
-
-        movePacman();
     }
 
-    public void movePacman() {
+    private void movePacman() {
 
         int pos;
         short ch;
@@ -66,6 +65,4 @@ public class Pacman {
         pacman_x = pacman_x + PACMAN_SPEED * pacmand_x;
         pacman_y = pacman_y + PACMAN_SPEED * pacmand_y;
     }
-
-
 }
