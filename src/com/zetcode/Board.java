@@ -22,7 +22,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Board extends JPanel implements ActionListener {
+public class Board extends JPanel implements ActionListener, Constants {
 
     /*
      * TODO: 1. Bikin menu -> Masih bug di helpScreen
@@ -47,14 +47,7 @@ public class Board extends JPanel implements ActionListener {
 
     private boolean inGame = false;
     private boolean dying = false;
-
-    private final int BLOCK_SIZE = 24;
-    private final int N_BLOCKS = 15;
-    private final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
-    private final int PAC_ANIM_DELAY = 2;
-    private final int MAX_GHOSTS = 12;
-
-    private int pacAnimCount = PAC_ANIM_DELAY; // bisa diganti jadi 2
+    private int pacAnimCount = PAC_ANIM_DELAY;
     private int pacAnimDir = 1;
     private int pacmanAnimPos = 0;
     private int N_GHOSTS = 6;
@@ -63,6 +56,7 @@ public class Board extends JPanel implements ActionListener {
     private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;
     private int counterLevel;
     private int showHelp;
+    private int escape = 0;
 
     /*
      * Bisa jadi class sendiri ini controller Terus fungsi-fungsi yang ada mengikuti
@@ -70,7 +64,7 @@ public class Board extends JPanel implements ActionListener {
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
 
-    private final int[] validSpeeds = { 1, 2, 3, 4, 6, 8 };
+
 
     private int currentSpeed = 3;
     private short[] screenData;
@@ -138,7 +132,6 @@ public class Board extends JPanel implements ActionListener {
 //            new Pacman();
             drawPacman(g2d);
             moveGhosts(g2d);
-//            new Ghost(g2d);
 
             checkMaze();
         }
@@ -164,7 +157,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    public void showHelpScreen(Graphics g) {
+    private void showHelpScreen(Graphics g) {
         g.setColor(new Color(0, 32, 48));
         g.fillRect(10, 10, SCREEN_SIZE - 15, SCREEN_SIZE - 15);
         g.setColor(Color.white);
@@ -172,7 +165,7 @@ public class Board extends JPanel implements ActionListener {
 
         int bx = 25, by = 60;
 
-        String a = "Help";
+        String a = "Bantuan";
 
         Font big = new Font("Helvetica", Font.BOLD, 18);
         Font medium = new Font("Helvetica", Font.BOLD, 14);
@@ -288,59 +281,11 @@ public class Board extends JPanel implements ActionListener {
 
         short i;
         int pos;
-        int count;
-
         for (i = 0; i < N_GHOSTS; i++) {
             if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
                 pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (ghost_y[i] / BLOCK_SIZE);
 
-                count = 0;
-
-                if ((screenData[pos] & 1) == 0 && ghost_dx[i] != 1) {
-                    dx[count] = -1;
-                    dy[count] = 0;
-                    count++;
-                }
-
-                if ((screenData[pos] & 2) == 0 && ghost_dy[i] != 1) {
-                    dx[count] = 0;
-                    dy[count] = -1;
-                    count++;
-                }
-
-                if ((screenData[pos] & 4) == 0 && ghost_dx[i] != -1) {
-                    dx[count] = 1;
-                    dy[count] = 0;
-                    count++;
-                }
-
-                if ((screenData[pos] & 8) == 0 && ghost_dy[i] != -1) {
-                    dx[count] = 0;
-                    dy[count] = 1;
-                    count++;
-                }
-
-                if (count == 0) {
-
-                    if ((screenData[pos] & 15) == 15) {
-                        ghost_dx[i] = 0;
-                        ghost_dy[i] = 0;
-                    } else {
-                        ghost_dx[i] = -ghost_dx[i];
-                        ghost_dy[i] = -ghost_dy[i];
-                    }
-
-                } else {
-
-                    count = (int) (Math.random() * count);
-
-                    if (count > 3) {
-                        count = 3;
-                    }
-
-                    ghost_dx[i] = dx[count];
-                    ghost_dy[i] = dy[count];
-                }
+                Ghost.ghostBrain(i, pos, screenData, ghost_dx, dx, dy, ghost_dy);
 
             }
 
@@ -584,7 +529,8 @@ public class Board extends JPanel implements ActionListener {
         doDrawing(g);
     }
 
-    private void doDrawing(Graphics g) {
+    private void doDrawing(Graphics g)  {
+
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -600,16 +546,19 @@ public class Board extends JPanel implements ActionListener {
         } else {
             showIntroScreen(g2d);
         }
-        
+
         if(showHelp == 1) {
         	showHelpScreen(g2d);
-        	g2d.dispose();
+            if(escape == 1){
+                g2d.dispose();
+                showIntroScreen(g2d);
+            }
         }
-        
-
         g2d.drawImage(ii, 5, 5, this);
         Toolkit.getDefaultToolkit().sync();
     }
+
+
 
     class TAdapter extends KeyAdapter {
 
@@ -649,7 +598,9 @@ public class Board extends JPanel implements ActionListener {
                 
                 if (key == 'h' || key == 'H') {
                 	showHelp = 1;
-//                	key = ;
+                }
+                if(key == KeyEvent.VK_ESCAPE || key == 'E' || key == 'e'){
+                    escape = 1;
                 }
             }
         }

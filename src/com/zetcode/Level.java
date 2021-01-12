@@ -1,7 +1,7 @@
 package com.zetcode;
 
-public class Level {
-	protected final static short levelData1[] = {
+public interface Level {
+    short levelData1[] = {
             19, 26, 26, 26, 18, 18, 18, 18, 18, 26, 26, 18, 18, 18, 22,
             21, 0 , 0 , 0 , 25, 16, 16, 16, 20, 0 , 0 , 17, 16, 16, 20,
             21, 0 , 0 , 0 , 0 , 17, 16, 16, 16, 22, 0 , 17, 16, 16, 20,
@@ -19,7 +19,7 @@ public class Level {
             25, 24, 24, 24, 24, 24, 24, 24, 26, 24, 24, 24, 24, 24, 28
     };
     
-    protected final static short levelData2[] = {
+     short levelData2[] = {
             19, 18, 18, 18, 18, 26, 26, 26, 26, 26, 18, 18, 18, 18, 22,
             17, 16, 16, 24, 20, 0 , 0 , 0 , 0 , 0 , 17, 24, 16, 16, 20,
             17, 16, 20, 0 , 17, 18, 18, 18, 18, 18, 20, 0 , 17, 16, 20,

@@ -1,0 +1,15 @@
+Why Use Interfaces
+    • When implementing a class from an interface we force
+    it to implement all of the abstract methods.
+    • The interface forces separation of what a class can do,
+    to how it actually does it.
+    • A programmer can change how something is done at
+    any point, without changing the function of the class.
+    • This facilitates the idea of polymorphism as the
+    methods described in the interface will be implemented
+    by all classes that implement the interface.
+
+Board extends Jpanel dan implements ActionListener, Constants
+    apakah implements menarapkan inheritence
+
+Class Ghost menerapkan encapsulation
