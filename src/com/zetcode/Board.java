@@ -38,17 +38,6 @@ import java.io.IOException;
 
 
 public class Board extends JPanel implements ActionListener, Constants, LineListener{
-    /*
-     * TODO: 1. Bikin menu -> Masih bug di helpScreen
-     *       2. Refactor Code yang implementasi oop
-     *       3. Bikin ghost yang beda-beda [Variasi] [Selesai]
-     *       4. Bikin map berbeda setiap level increment [Variasi] [Selesai]
-     *
-     */
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private Dimension d;
     private final Font smallFont = new Font("Helvetica", Font.BOLD, 14);
@@ -206,7 +195,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
 
         int bx = 25, by = 60;
 
-        String a = "Help";
+        String a = "Menu Bantuan";
 
         Font big = new Font("Helvetica", Font.BOLD, 18);
         Font medium = new Font("Helvetica", Font.BOLD, 14);
@@ -217,47 +206,24 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         g.setFont(big);
         g.drawString(a, (SCREEN_SIZE - metr1.stringWidth(a)) / 2, 40);
         g.setFont(medium);
-        g.drawString("Title Screen", bx, by);
-        g.drawString("In Game", bx + 200, by);
-        g.drawString("Controls", bx, by + 90);
+        g.drawString("Menu Utama", bx, by);
+        g.drawString("Pada Game ", bx + 200, by);
+        g.drawString("Kontrol", bx, by + 90);
         g.setFont(small);
-        g.drawString("S - Start Single Player", bx + 10, by + 20);
-        g.drawString("D - Start Co-op", bx + 10, by + 40);
-        g.drawString("F - Start Versus", bx + 10, by + 60);
-        g.drawString("Esc - Quit Game", bx + 210, by + 20);
-        g.drawString("P - Pause Game", bx + 210, by + 40);
-        g.drawString("M - Mute Game", bx + 210, by + 60);
+        g.drawString("S - Untuk Memulai Permainan", bx + 10, by + 20);
+        g.drawString("H - Pindah Ke Menu Bantuan", bx + 10, by + 40);
 
-        // if (enableLevelSelect)
-        // g.drawString("L - Level Select (Press 1,2,3)", bx + 210, by + 80);
-        // else
-        // g.drawString("L - Level Select (Blocked)", bx + 210, by + 80);
+        g.drawString("Esc - Untuk Keluar", bx + 210, by + 20);
 
         g.drawString("Pacman:", bx + 10, by + 110);
-        g.drawString("Up Arrow - Move Up", bx + 30, by + 130);
-        g.drawString("Left Arrow - Move Left", bx + 30, by + 150);
-        g.drawString("Down Arrow - Move Down", bx + 30, by + 170);
-        g.drawString("Right Arrow - Move Right", bx + 30, by + 190);
+        g.drawString("Panah Atas - Jalan Keatas", bx + 30, by + 130);
+        g.drawString("Panah Kiri - Jalan Kekiri", bx + 30, by + 150);
+        g.drawString("Panah Bawah - Jalan Kebawah", bx + 30, by + 170);
+        g.drawString("Panah Kana - Jalan Kekanan", bx + 30, by + 190);
 
-        g.drawString("Mrs. Pacman:", bx + 220, by + 110);
-        g.drawString("W - Move Up", bx + 240, by + 130);
-        g.drawString("A - Move Left", bx + 240, by + 150);
-        g.drawString("S - Move Down", bx + 240, by + 170);
-        g.drawString("D - Move Right", bx + 240, by + 190);
 
-        g.drawString("Ghost 1", bx + 10, by + 220);
-        g.drawString("W - Move Up", bx + 30, by + 240);
-        g.drawString("A - Move Left", bx + 30, by + 260);
-        g.drawString("S - Move Down", bx + 30, by + 280);
-        g.drawString("D - Move Right", bx + 30, by + 300);
 
-        g.drawString("Ghost 2", bx + 220, by + 220);
-        g.drawString("I - Move Up", bx + 240, by + 240);
-        g.drawString("J - Move Left", bx + 240, by + 260);
-        g.drawString("K - Move Down", bx + 240, by + 280);
-        g.drawString("L - Move Right", bx + 240, by + 300);
-
-        g.drawString("Press 'h' to return...", bx + 245, by + 330);
+        g.drawString("Tekan E untuk kembali.", bx + 100, by + 250);
     }
 
     private void drawScore(Graphics2D g) {
@@ -305,10 +271,9 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     }
 
     private void death() {
-        // Case ketika mati
+
         pacsLeft--;
 
-        // Jika nyawa telah habis
         if (pacsLeft == 0) {
             inGame = false;
             counterLevel = 0;
@@ -447,7 +412,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
                 }
             }
 
-            // Check for standstill
+
             if ((pacmand_x == -1 && pacmand_y == 0 && (ch & 1) != 0)
                     || (pacmand_x == 1 && pacmand_y == 0 && (ch & 4) != 0)
                     || (pacmand_x == 0 && pacmand_y == -1 && (ch & 2) != 0)
@@ -552,26 +517,20 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     }
 
     private void initGame() {
-
-        // Edit game
         counterLevel = 0;
         pacsLeft = 3;
         initLevel();
         N_GHOSTS = 2;
         currentSpeed = 3;
-//        try {
-//            this.beginningAudio.play();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-       
-       
     }
 
     private void initLevel() {
 
         int i;
-        Level lv = new Level((short) 16, (short) 0);
+        short z, j;
+        z = 16;
+        j = 0;
+        Level lv = new Level(j,  z);
         if (counterLevel % 2 == 1) {
             for (i = 0; i < N_BLOCKS * N_BLOCKS; i++) {
                 screenData[i] = Level.levelData1[i];

@@ -1,28 +1,28 @@
 package com.zetcode;
 
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
-public class Pacman {
-    /*TODO: 11/01/2021
-      1. Pada play game fungsi pacman yang ditulis
-            movePacman()
-            drawPacman()
-      2. Fungsi movePacman()
-     */
+public class Pacman  {
+    private static  int pacman_x, pacman_y, pacmand_x, pacmand_y;
+    private static int req_dx, req_dy, view_dx, view_dy;
+    private static short[] screenData;
+    private static int score;
+    private static final int N_BLOCKS = 15;
+    private static  int BLOCK_SIZE = 24;
+    private Graphics2D g2d;
+    private static int pacmanAnimPos = 0;
 
-    private int pacman_x, pacman_y, pacmand_x, pacmand_y;
-    private int req_dx, req_dy, view_dx, view_dy;
-    private short[] screenData;
-    private int score;
-    private final int N_BLOCKS = 15;
-    private final int BLOCK_SIZE = 24;
 
     public Pacman() {
+        this.g2d = g2d;
+        screenData = new short[N_BLOCKS * N_BLOCKS];
+        movePacman();
     }
 
-    private void movePacman() {
-
-        int pos;
+    public static void movePacman() {
+        int pos = 0;
         short ch;
 
         if (req_dx == -pacmand_x && req_dy == -pacmand_y) {
@@ -64,5 +64,58 @@ public class Pacman {
         int PACMAN_SPEED = 6;
         pacman_x = pacman_x + PACMAN_SPEED * pacmand_x;
         pacman_y = pacman_y + PACMAN_SPEED * pacmand_y;
+    }
+
+    public void drawPacman(Graphics2D g2d) {
+
+        if (view_dx == -1) {
+            drawPacnanLeft(g2d);
+        } else if (view_dx == 1) {
+            drawPacmanRight(g2d);
+        } else if (view_dy == -1) {
+            drawPacmanUp(g2d);
+        } else {
+            drawPacmanDown(g2d);
+        }
+    }
+
+    public void drawPacmanUp(Graphics2D g2d) {
+
+        switch (pacmanAnimPos) {
+            case 1 -> g2d.drawImage(Assets.pacman2up, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 2 -> g2d.drawImage(Assets.pacman3up, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 3 -> g2d.drawImage(Assets.pacman4up, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+        }
+    }
+
+    public void drawPacmanDown(Graphics2D g2d) {
+
+        switch (pacmanAnimPos) {
+            case 1 -> g2d.drawImage(Assets.pacman2down, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 2 -> g2d.drawImage(Assets.pacman3down, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 3 -> g2d.drawImage(Assets.pacman4down, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+        }
+    }
+
+    public void drawPacnanLeft(Graphics2D g2d) {
+
+        switch (pacmanAnimPos) {
+            case 1 -> g2d.drawImage(Assets.pacman2left, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 2 -> g2d.drawImage(Assets.pacman3left, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 3 -> g2d.drawImage(Assets.pacman4left, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+        }
+    }
+
+    public void drawPacmanRight(Graphics2D g2d) {
+
+        switch (pacmanAnimPos) {
+            case 1 -> g2d.drawImage(Assets.pacman2right, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 2 -> g2d.drawImage(Assets.pacman3right, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            case 3 -> g2d.drawImage(Assets.pacman4right, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+            default -> g2d.drawImage(Assets.pacman1, pacman_x + 1, pacman_y + 1, (ImageObserver) this);
+        }
     }
 }

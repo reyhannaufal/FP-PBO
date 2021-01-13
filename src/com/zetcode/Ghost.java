@@ -1,10 +1,8 @@
 package com.zetcode;
 
-
-
 public class Ghost {
 
-    static void ghostBrain(short i, int pos, short[] screenData, int[] ghost_dx, int[] dx, int[] dy, int[] ghost_dy) {
+    static void GhostBrain(short i, int pos, short[] screenData, int[] ghost_dx, int[] dx, int[] dy, int[] ghost_dy) {
         int count;
         count = 0;
 
@@ -54,6 +52,5 @@ public class Ghost {
             ghost_dy[i] = dy[count];
         }
     }
-
 
 }
