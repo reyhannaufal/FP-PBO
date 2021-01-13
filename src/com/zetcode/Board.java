@@ -293,7 +293,6 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
                 pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (ghost_y[i] / BLOCK_SIZE);
 
                 Ghost.GhostBrain(i, pos, screenData, ghost_dx, dx, dy, ghost_dy);
-
             }
 
             ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
