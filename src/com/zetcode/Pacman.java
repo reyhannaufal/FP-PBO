@@ -14,7 +14,6 @@ public class Pacman  {
     private Graphics2D g2d;
     private static int pacmanAnimPos = 0;
 
-
     public Pacman() {
         this.g2d = g2d;
         screenData = new short[N_BLOCKS * N_BLOCKS];

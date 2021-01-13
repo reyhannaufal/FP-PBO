@@ -36,14 +36,14 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class Board extends JPanel implements ActionListener, Constants, LineListener{
+public class Board extends AbstractBoard implements ActionListener, Constants, LineListener{
     private static final long serialVersionUID = 1L;
     private Dimension d;
     private final Font smallFont = new Font("Helvetica", Font.BOLD, 14);
 
     private Image ii;
 
-    // Mengubah titk-titik menjadi hijau
+
     private final Color dotColor = new Color(255, 255, 255);
     private Color mazeColor;
 
@@ -66,9 +66,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     private int counterLevel;
     private int showHelp;
 
-    /*
-     * Bisa jadi class sendiri ini controller Terus fungsi-fungsi yang ada mengikuti
-     */
+
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
 
@@ -79,11 +77,11 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     private Timer timer;
     
     boolean playCompleted;
-//    private Audio beginningAudio;
     String audioFilePath = "./src/resources/audio/beginning.wav";
     
 
     public Board() {
+        super();
         try {
     	Assets.init();
         } catch (Exception e) {
@@ -91,14 +89,9 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         }
         initVariables();
         initBoard();
-//        try {
-//        	this.beginningAudio = new Audio(getClass().getResourceAsStream("./src/resources/audio/beginning.wav"));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
-    private void initBoard() {
+    protected void initBoard() {
 
         addKeyListener(new TAdapter());
 
@@ -107,7 +100,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         setBackground(Color.DARK_GRAY);
     }
 
-    private void initVariables() {
+    protected void initVariables() {
 
         screenData = new short[N_BLOCKS * N_BLOCKS];
         mazeColor = new Color(5, 5, 100);
@@ -151,10 +144,9 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
             death();
         } else {
             movePacman();
-//            new Pacman();
+
             drawPacman(g2d);
             moveGhosts(g2d);
-//            new Ghost(g2d);
 
             checkMaze();
         }
@@ -232,7 +224,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         g.setFont(smallFont);
         g.setColor(new Color(96, 128, 255));
         s = "Nilai kamu: " + score;
-        g.drawString(s, SCREEN_SIZE / 2 + 86, SCREEN_SIZE + 16);
+        g.drawString(s, SCREEN_SIZE / 2 + 60, SCREEN_SIZE + 16);
 
         for (i = 0; i < pacsLeft; i++) {
         	g.drawImage(Assets.pacman3left, i * 28 + 8, SCREEN_SIZE + 1, this);
@@ -269,7 +261,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         }
     }
 
-    private void death() {
+    protected void death() {
 
         pacsLeft--;
 

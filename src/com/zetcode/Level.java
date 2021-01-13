@@ -1,8 +1,6 @@
 package com.zetcode;
 
 public abstract class Level {
-
-	
     static short levelData1[] = {
             19, 26, 26, 26, 18, 18, 18, 18, 18, 26, 26, 18, 18, 18, 22,
             21, 0 , 0 , 0 , 25, 16, 16, 16, 20, 0 , 0 , 17, 16, 16, 20,
