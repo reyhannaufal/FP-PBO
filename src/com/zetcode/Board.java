@@ -31,7 +31,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import com.zetcode.Audio;
 
 import java.io.File;
 import java.io.IOException;
@@ -293,53 +292,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
             if (ghost_x[i] % BLOCK_SIZE == 0 && ghost_y[i] % BLOCK_SIZE == 0) {
                 pos = ghost_x[i] / BLOCK_SIZE + N_BLOCKS * (ghost_y[i] / BLOCK_SIZE);
 
-                count = 0;
-
-                if ((screenData[pos] & 1) == 0 && ghost_dx[i] != 1) {
-                    dx[count] = -1;
-                    dy[count] = 0;
-                    count++;
-                }
-
-                if ((screenData[pos] & 2) == 0 && ghost_dy[i] != 1) {
-                    dx[count] = 0;
-                    dy[count] = -1;
-                    count++;
-                }
-
-                if ((screenData[pos] & 4) == 0 && ghost_dx[i] != -1) {
-                    dx[count] = 1;
-                    dy[count] = 0;
-                    count++;
-                }
-
-                if ((screenData[pos] & 8) == 0 && ghost_dy[i] != -1) {
-                    dx[count] = 0;
-                    dy[count] = 1;
-                    count++;
-                }
-
-                if (count == 0) {
-
-                    if ((screenData[pos] & 15) == 15) {
-                        ghost_dx[i] = 0;
-                        ghost_dy[i] = 0;
-                    } else {
-                        ghost_dx[i] = -ghost_dx[i];
-                        ghost_dy[i] = -ghost_dy[i];
-                    }
-
-                } else {
-
-                    count = (int) (Math.random() * count);
-
-                    if (count > 3) {
-                        count = 3;
-                    }
-
-                    ghost_dx[i] = dx[count];
-                    ghost_dy[i] = dy[count];
-                }
+                Ghost.GhostBrain(i, pos, screenData, ghost_dx, dx, dy, ghost_dy);
 
             }
 
@@ -364,6 +317,8 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
             }
         }
     }
+
+
 
     private void drawGhost(Graphics2D g2d, int x, int y) {
 

@@ -14,11 +14,10 @@ Why Use Interfaces
 3. Try Catch [udah]
 4. StringBuffer [udah]
 5. Abstract Class [udah]
-6. Overload niban fungsi paramater beda
-7. Override fungsi nya sama persis paramater sama [udah]
-8. Polymorphism
-9. Inheritence
-10. Encapsulation
+6. Overload / Override [udah]
+7. Polymorphism
+8. Inheritence
+9. Encapsulation
 
 Board extends Jpanel dan implements ActionListener, Constants
     apakah implements menarapkan inheritence
