@@ -525,12 +525,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     }
 
     private void initLevel() {
-
-        int i;
-        short z, j;
-        z = 16;
-        j = 0;
-        Level lv = new Level(j,  z);
+    	int i;
         if (counterLevel % 2 == 1) {
             for (i = 0; i < N_BLOCKS * N_BLOCKS; i++) {
                 screenData[i] = Level.levelData1[i];
@@ -540,7 +535,7 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
                 screenData[i] = Level.levelData2[i];
             }
             if(counterLevel == 0 && inGame == true) {
-            	File audioFile = new File(audioFilePath);
+          	File audioFile = new File(audioFilePath);
                 
                 try {
                     AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
