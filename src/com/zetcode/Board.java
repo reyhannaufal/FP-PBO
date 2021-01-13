@@ -19,11 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 
-import java.io.File;
-import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -33,9 +29,15 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import com.zetcode.Audio;
+
+import java.io.File;
+import java.io.IOException;
+
 
 public class Board extends JPanel implements ActionListener, Constants, LineListener{
-
     /*
      * TODO: 1. Bikin menu -> Masih bug di helpScreen
      *       2. Refactor Code yang implementasi oop
@@ -89,7 +91,9 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
     private Timer timer;
     
     boolean playCompleted;
+//    private Audio beginningAudio;
     String audioFilePath = "./src/resources/audio/beginning.wav";
+    
 
     public Board() {
         try {
@@ -99,6 +103,11 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         }
         initVariables();
         initBoard();
+//        try {
+//        	this.beginningAudio = new Audio(getClass().getResourceAsStream("./src/resources/audio/beginning.wav"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void initBoard() {
@@ -186,46 +195,6 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         g.drawString(str.toString(), (SCREEN_SIZE - metr.stringWidth(str.toString())) / 2, SCREEN_SIZE / 2 + metr.getHeight() / 2);
         
         str.delete(0, str.length());
-        
-        File audioFile = new File(audioFilePath);
-        
-        
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
- 
-            AudioFormat format = audioStream.getFormat();
- 
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
- 
-            Clip audioClip = (Clip) AudioSystem.getLine(info);
- 
-            audioClip.addLineListener(this);
- 
-            audioClip.open(audioStream);
-             
-            audioClip.start();
-            
-            while (!playCompleted) {
-                // wait for the playback completes
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            
-            audioClip.close();
-             
-        } catch (UnsupportedAudioFileException ex) {
-            System.out.println("The specified audio file is not supported.");
-            ex.printStackTrace();
-        } catch (LineUnavailableException ex) {
-            System.out.println("Audio line for playing back is unavailable.");
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            System.out.println("Error playing the audio file.");
-            ex.printStackTrace();
-        }
          
     }
 
@@ -590,11 +559,19 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         initLevel();
         N_GHOSTS = 2;
         currentSpeed = 3;
+//        try {
+//            this.beginningAudio.play();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+       
+       
     }
 
     private void initLevel() {
 
         int i;
+        Level lv = new Level((short) 16, (short) 0);
         if (counterLevel % 2 == 1) {
             for (i = 0; i < N_BLOCKS * N_BLOCKS; i++) {
                 screenData[i] = Level.levelData1[i];
@@ -602,6 +579,44 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
         } else if (counterLevel % 2 == 0) {
             for (i = 0; i < N_BLOCKS * N_BLOCKS; i++) {
                 screenData[i] = Level.levelData2[i];
+            }
+            if(counterLevel == 0 && inGame == true) {
+            	File audioFile = new File(audioFilePath);
+                
+                try {
+                    AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+         
+                    AudioFormat format = audioStream.getFormat();
+         
+                    DataLine.Info info = new DataLine.Info(Clip.class, format);
+         
+                    Clip audioClip = (Clip) AudioSystem.getLine(info);
+         
+                    audioClip.addLineListener((LineListener) this);
+         
+                    audioClip.open(audioStream);
+                     
+                    audioClip.start();
+                    
+                    while (!playCompleted) {
+                        // wait for the playback completes
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                     
+                } catch (UnsupportedAudioFileException ex) {
+                    System.out.println("The specified audio file is not supported.");
+                    ex.printStackTrace();
+                } catch (LineUnavailableException ex) {
+                    System.out.println("Audio line for playing back is unavailable.");
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    System.out.println("Error playing the audio file.");
+                    ex.printStackTrace();
+                }     
             }
         }
 
@@ -662,12 +677,14 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
 
         if (inGame) {
             playGame(g2d);
+                
         } else {
             showIntroScreen(g2d);
         }
         
         if(showHelp == 1) {
         	showHelpScreen(g2d);
+        	
         }
         
         g2d.dispose();
@@ -748,4 +765,6 @@ public class Board extends JPanel implements ActionListener, Constants, LineList
             playCompleted = true;
 		}
 	}
+
+
 }
